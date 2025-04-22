@@ -6,13 +6,23 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rb;
+    [SerializeField] float speed;
     private float movementX;
     private float movementY;
-    [SerializeField] float speed;
+    private int count;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        count = 0;
+    }
+
+    private void OnMove(InputValue movementValue)
+    {
+        // Input System 이용, Input이 감지되면 작동함
+        Vector2 movementVector = movementValue.Get<Vector2>();
+        movementX = movementVector.x;
+        movementY = movementVector.y;
     }
 
     private void FixedUpdate()
@@ -21,10 +31,13 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(movement * speed);
     }
 
-    private void OnMove (InputValue movementValue)
+    private void OnTriggerEnter(Collider other)
     {
-        Vector2 movementVector = movementValue.Get<Vector2>();
-        movementX = movementVector.x;
-        movementY = movementVector.y;
+        if (other.gameObject.tag == "PickUp")
+        {
+            other.gameObject.SetActive(false);
+        }
+
+        count++;
     }
 }
